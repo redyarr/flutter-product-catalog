@@ -4,7 +4,6 @@ import 'package:flutter_testapp/core/theme/app_colors.dart';
 import 'package:flutter_testapp/core/theme/app_radius.dart';
 import 'package:flutter_testapp/core/theme/app_spacing.dart';
 
-/// Horizontal scrollable category filter pills with haptic feedback.
 class CategoryFilterChips extends StatelessWidget {
   const CategoryFilterChips({
     required this.categories,
@@ -19,32 +18,51 @@ class CategoryFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final List<String?> chipValues = <String?>[null, ...categories];
     final double textScale =
         (MediaQuery.textScalerOf(context).scale(14) / 14).clamp(1.0, 1.5);
 
     return SizedBox(
       height: 42 * textScale,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-        itemCount: chipValues.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-        itemBuilder: (BuildContext context, int index) {
-          final String? category = chipValues[index];
-          final bool isSelected = category == selectedCategory;
-          final String label =
-              category == null ? 'All' : _formatCategoryLabel(category);
-
-          return _CategoryPill(
-            label: label,
-            isSelected: isSelected,
-            onTap: () {
-              HapticFeedback.selectionClick();
-              onCategorySelected(category);
-            },
-          );
+      child: ShaderMask(
+        blendMode: BlendMode.dstIn,
+        shaderCallback: (Rect bounds) {
+          final double fadeStart = bounds.width > AppSpacing.xl
+              ? (bounds.width - AppSpacing.xl) / bounds.width
+              : 0.0;
+          return LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: <Color>[
+              colorScheme.onSurface,
+              colorScheme.onSurface,
+              colorScheme.onSurface.withValues(alpha: 0),
+            ],
+            stops: <double>[0.0, fadeStart, 1.0],
+          ).createShader(bounds);
         },
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          itemCount: chipValues.length,
+          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+          itemBuilder: (BuildContext context, int index) {
+            final String? category = chipValues[index];
+            final bool isSelected = category == selectedCategory;
+            final String label =
+                category == null ? 'All' : _formatCategoryLabel(category);
+
+            return _CategoryPill(
+              label: label,
+              isSelected: isSelected,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                onCategorySelected(category);
+              },
+            );
+          },
+        ),
       ),
     );
   }

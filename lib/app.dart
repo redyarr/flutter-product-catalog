@@ -7,7 +7,6 @@ import 'package:flutter_testapp/features/catalog/presentation/bloc/catalog_bloc.
 import 'package:flutter_testapp/features/catalog/presentation/bloc/catalog_event.dart';
 import 'package:flutter_testapp/features/catalog/presentation/pages/catalog_page.dart';
 
-/// Root MaterialApp wiring themes and feature dependencies.
 class CatalogApp extends StatelessWidget {
   const CatalogApp({
     required this.catalogRepository,

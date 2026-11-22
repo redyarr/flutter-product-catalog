@@ -6,14 +6,12 @@ import 'package:flutter_testapp/core/constants/api_constants.dart';
 import 'package:flutter_testapp/core/error/exceptions.dart';
 import 'package:http/http.dart' as http;
 
-/// Defensive HTTP client enforcing HTTPS URIs, 10-second timeouts, and typed parsing.
 class ApiClient {
   ApiClient({http.Client? httpClient})
       : _httpClient = httpClient ?? http.Client();
 
   final http.Client _httpClient;
 
-  /// Performs a GET request to an HTTPS [uri] and returns a typed JSON map.
   Future<Map<String, Object?>> getJson(Uri uri) async {
     if (uri.scheme != 'https') {
       throw const NetworkException('Only HTTPS requests are permitted.');
@@ -72,7 +70,6 @@ class ApiClient {
     }
   }
 
-  /// Releases the underlying [http.Client].
   void close() {
     _httpClient.close();
   }

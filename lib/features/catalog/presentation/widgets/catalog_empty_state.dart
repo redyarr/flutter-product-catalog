@@ -3,7 +3,6 @@ import 'package:flutter_testapp/core/theme/app_colors.dart';
 import 'package:flutter_testapp/core/theme/app_radius.dart';
 import 'package:flutter_testapp/core/theme/app_spacing.dart';
 
-/// Polished empty state displayed when active search/category filters match zero items.
 class CatalogEmptyState extends StatelessWidget {
   const CatalogEmptyState({
     required this.onResetFilters,
@@ -52,6 +51,10 @@ class CatalogEmptyState extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xl),
               FilledButton.tonal(
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.primaryContainer,
+                  foregroundColor: colorScheme.onPrimaryContainer,
+                ),
                 onPressed: onResetFilters,
                 child: const Text('Reset Filters'),
               ),

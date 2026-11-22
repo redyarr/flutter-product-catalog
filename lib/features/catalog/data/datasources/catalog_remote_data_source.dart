@@ -3,13 +3,10 @@ import 'package:flutter_testapp/core/error/exceptions.dart';
 import 'package:flutter_testapp/core/network/api_client.dart';
 import 'package:flutter_testapp/features/catalog/data/models/product_model.dart';
 
-/// Contract for fetching raw product DTOs from the remote catalog endpoint.
 abstract interface class CatalogRemoteDataSource {
-  /// Fetches product items from the backend API.
   Future<List<ProductModel>> fetchProducts();
 }
 
-/// Remote data source implementation backed by [ApiClient].
 class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
   const CatalogRemoteDataSourceImpl({required ApiClient apiClient})
       : _apiClient = apiClient;

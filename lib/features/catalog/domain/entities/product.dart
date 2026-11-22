@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Immutable domain entity representing a catalog product.
 class Product extends Equatable {
   const Product({
     required this.id,
@@ -38,7 +37,6 @@ class Product extends Equatable {
   final String availabilityStatus;
   final String returnPolicy;
 
-  /// Primary image URL preferring [thumbnail] and falling back to first image.
   String get primaryImageUrl {
     if (thumbnail.isNotEmpty) {
       return thumbnail;
@@ -49,7 +47,6 @@ class Product extends Equatable {
     return '';
   }
 
-  /// High-resolution hero image preferring [images.first] then [thumbnail].
   String get heroImageUrl {
     if (images.isNotEmpty) {
       return images.first;
@@ -57,7 +54,6 @@ class Product extends Equatable {
     return thumbnail;
   }
 
-  /// Formatted original price before discount when [discountPercentage] > 0.
   double? get originalPrice {
     if (discountPercentage <= 0 || discountPercentage >= 100) {
       return null;

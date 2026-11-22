@@ -1,7 +1,6 @@
 import 'package:flutter_testapp/core/error/exceptions.dart';
 import 'package:flutter_testapp/features/catalog/domain/entities/product.dart';
 
-/// Data transfer object for [Product] with strict defensive JSON parsing.
 class ProductModel extends Product {
   const ProductModel({
     required super.id,
@@ -22,10 +21,6 @@ class ProductModel extends Product {
     required super.returnPolicy,
   });
 
-  /// Parses and validates a JSON object into [ProductModel].
-  ///
-  /// Throws [DataParsingException] if mandatory fields (`id`, `title`, `price`)
-  /// are missing, mistyped, or semantically invalid.
   factory ProductModel.fromJson(Map<String, Object?> json) {
     final int id = _requirePositiveInt(json['id'], 'id');
     final String title = _requireNonEmptyString(json['title'], 'title');

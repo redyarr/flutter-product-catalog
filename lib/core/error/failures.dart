@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Sealed domain failure hierarchy exposed safely to the presentation layer.
-///
-/// Raw exception details and stack traces are never propagated to UI widgets.
+// Only user-safe messages cross into UI state; raw exceptions stay in data/.
 sealed class Failure extends Equatable {
   const Failure(this.userMessage);
 
@@ -12,7 +10,6 @@ sealed class Failure extends Equatable {
   List<Object?> get props => <Object?>[userMessage];
 }
 
-/// Connectivity or transport failure.
 final class NetworkFailure extends Failure {
   const NetworkFailure([
     super.userMessage =
@@ -20,7 +17,6 @@ final class NetworkFailure extends Failure {
   ]);
 }
 
-/// Request exceeded the configured network timeout.
 final class TimeoutFailure extends Failure {
   const TimeoutFailure([
     super.userMessage =
@@ -28,7 +24,6 @@ final class TimeoutFailure extends Failure {
   ]);
 }
 
-/// Backend returned an unexpected HTTP status code.
 final class ServerFailure extends Failure {
   const ServerFailure([
     super.userMessage =
@@ -36,7 +31,6 @@ final class ServerFailure extends Failure {
   ]);
 }
 
-/// Payload did not satisfy defensive schema validation.
 final class DataParsingFailure extends Failure {
   const DataParsingFailure([
     super.userMessage =

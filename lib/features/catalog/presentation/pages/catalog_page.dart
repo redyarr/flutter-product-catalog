@@ -15,7 +15,6 @@ import 'package:flutter_testapp/features/catalog/presentation/widgets/category_f
 import 'package:flutter_testapp/features/catalog/presentation/widgets/product_card.dart';
 import 'package:flutter_testapp/features/catalog/presentation/widgets/product_shimmer_grid.dart';
 
-/// Primary catalog view displaying search, category filters, and product grid states.
 class CatalogPage extends StatelessWidget {
   const CatalogPage({super.key});
 
@@ -32,6 +31,8 @@ class CatalogPage extends StatelessWidget {
         child: BlocBuilder<CatalogBloc, CatalogState>(
           builder: (BuildContext context, CatalogState state) {
             return CustomScrollView(
+              // Pre-cache slightly ahead of the viewport without eagerly mounting all 30 images.
+              cacheExtent: 500,
               slivers: <Widget>[
                 SliverAppBar(
                   floating: true,
@@ -50,7 +51,9 @@ class CatalogPage extends StatelessWidget {
                       ),
                       if (state.status == CatalogStatus.success)
                         Text(
-                          '${state.filteredProducts.length} items available',
+                          state.filteredProducts.length == 1
+                              ? '1 item available'
+                              : '${state.filteredProducts.length} items available',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: textTheme.bodySmall?.copyWith(
@@ -115,14 +118,7 @@ class CatalogPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                SliverToBoxAdapter(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeOutCubic,
-                    child: _buildBodyContent(context, state),
-                  ),
-                ),
+                _buildBodySliver(context, state),
               ],
             );
           },
@@ -131,22 +127,21 @@ class CatalogPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBodyContent(BuildContext context, CatalogState state) {
-    final double minStateHeight =
-        (MediaQuery.sizeOf(context).height * 0.5).clamp(280.0, 460.0);
+  Widget _buildBodySliver(BuildContext context, CatalogState state) {
+    final String stateKey;
+    final Widget sliver;
 
     switch (state.status) {
       case CatalogStatus.initial:
       case CatalogStatus.loading:
-        return const ProductShimmerGrid(
-          key: ValueKey<String>('catalog-loading'),
-        );
+        stateKey = 'catalog-loading';
+        sliver = const ProductShimmerGrid();
 
       case CatalogStatus.failure:
+        stateKey = 'catalog-error';
         final Failure failure = state.failure ?? const NetworkFailure();
-        return ConstrainedBox(
-          key: const ValueKey<String>('catalog-error'),
-          constraints: BoxConstraints(minHeight: minStateHeight),
+        sliver = SliverFillRemaining(
+          hasScrollBody: false,
           child: CatalogErrorState(
             message: failure.userMessage,
             onRetry: () {
@@ -157,49 +152,64 @@ class CatalogPage extends StatelessWidget {
 
       case CatalogStatus.success:
         if (state.filteredProducts.isEmpty) {
-          return ConstrainedBox(
-            key: const ValueKey<String>('catalog-empty'),
-            constraints: BoxConstraints(minHeight: minStateHeight),
+          stateKey = 'catalog-empty';
+          sliver = SliverFillRemaining(
+            hasScrollBody: false,
             child: CatalogEmptyState(
               onResetFilters: () {
                 context.read<CatalogBloc>().add(const CatalogFiltersReset());
               },
             ),
           );
-        }
+        } else {
+          stateKey = 'catalog-success';
+          // Scale card proportions so 1.3x system font scaling never overflows.
+          final double textScale =
+              (MediaQuery.textScalerOf(context).scale(14) / 14).clamp(1.0, 1.5);
+          final double cardAspectRatio = 0.64 / (1 + (textScale - 1) * 1.45);
 
-        final double textScale =
-            (MediaQuery.textScalerOf(context).scale(14) / 14).clamp(1.0, 1.5);
-        final double cardAspectRatio = 0.68 / (1 + (textScale - 1) * 1.45);
-
-        return Padding(
-          key: const ValueKey<String>('catalog-success'),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.xs,
-            AppSpacing.lg,
-            AppSpacing.xxl,
-          ),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 240,
-              mainAxisSpacing: AppSpacing.md,
-              crossAxisSpacing: AppSpacing.md,
-              childAspectRatio: cardAspectRatio,
+          sliver = SliverPadding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.xs,
+              AppSpacing.lg,
+              AppSpacing.xxl,
             ),
-            itemCount: state.filteredProducts.length,
-            itemBuilder: (BuildContext context, int index) {
-              final Product product = state.filteredProducts[index];
-              return ProductCard(
-                product: product,
-                onTap: () => _openDetails(context, product),
-              );
-            },
-          ),
-        );
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 240,
+                mainAxisSpacing: AppSpacing.md,
+                crossAxisSpacing: AppSpacing.md,
+                childAspectRatio: cardAspectRatio,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  final Product product = state.filteredProducts[index];
+                  return ProductCard(
+                    product: product,
+                    onTap: () => _openDetails(context, product),
+                  );
+                },
+                childCount: state.filteredProducts.length,
+              ),
+            ),
+          );
+        }
     }
+
+    return TweenAnimationBuilder<double>(
+      key: ValueKey<String>(stateKey),
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+      builder: (BuildContext context, double opacity, Widget? child) {
+        return SliverOpacity(
+          opacity: opacity,
+          sliver: child,
+        );
+      },
+      child: sliver,
+    );
   }
 
   void _openDetails(BuildContext context, Product product) {

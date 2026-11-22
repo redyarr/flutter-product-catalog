@@ -3,7 +3,6 @@ import 'package:flutter_testapp/core/theme/app_colors.dart';
 import 'package:flutter_testapp/core/theme/app_radius.dart';
 import 'package:flutter_testapp/core/theme/app_spacing.dart';
 
-/// Pulsing skeleton grid matching [ProductCard] geometry during catalog loading.
 class ProductShimmerGrid extends StatefulWidget {
   const ProductShimmerGrid({super.key});
 
@@ -39,33 +38,33 @@ class _ProductShimmerGridState extends State<ProductShimmerGrid>
   Widget build(BuildContext context) {
     final double textScale =
         (MediaQuery.textScalerOf(context).scale(14) / 14).clamp(1.0, 1.5);
-    final double cardAspectRatio = 0.68 / (1 + (textScale - 1) * 1.45);
+    final double cardAspectRatio = 0.64 / (1 + (textScale - 1) * 1.45);
 
-    return Padding(
+    return SliverPadding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
         AppSpacing.sm,
         AppSpacing.lg,
         AppSpacing.xxl,
       ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+      sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
           mainAxisSpacing: AppSpacing.md,
           crossAxisSpacing: AppSpacing.md,
           childAspectRatio: cardAspectRatio,
         ),
-        itemCount: 6,
-        itemBuilder: (BuildContext context, int index) {
-          return AnimatedBuilder(
-            animation: _pulseAnimation,
-            builder: (BuildContext context, Widget? child) {
-              return _SkeletonCard(opacityFactor: _pulseAnimation.value);
-            },
-          );
-        },
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            return AnimatedBuilder(
+              animation: _pulseAnimation,
+              builder: (BuildContext context, Widget? child) {
+                return _SkeletonCard(opacityFactor: _pulseAnimation.value);
+              },
+            );
+          },
+          childCount: 6,
+        ),
       ),
     );
   }

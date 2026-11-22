@@ -3,7 +3,6 @@ import 'package:flutter_testapp/core/theme/app_colors.dart';
 import 'package:flutter_testapp/core/theme/app_radius.dart';
 import 'package:flutter_testapp/core/theme/app_spacing.dart';
 
-/// Clean error card displaying a safe domain message and retry action.
 class CatalogErrorState extends StatelessWidget {
   const CatalogErrorState({
     required this.message,

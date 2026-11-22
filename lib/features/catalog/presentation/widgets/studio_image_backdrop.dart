@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Studio-lit theme-aware radial backdrop used behind product imagery.
 class StudioImageBackdrop extends StatelessWidget {
   const StudioImageBackdrop({
     required this.child,
@@ -13,6 +12,7 @@ class StudioImageBackdrop extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color outerColor = colorScheme.surfaceContainerLow;
+    // AppTheme leaves surfaceContainerHighest unset (matching surface); fall back to defined spotlight tokens.
     final Color centerColor =
         colorScheme.surfaceContainerHighest != outerColor
             ? colorScheme.surfaceContainerHighest

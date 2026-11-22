@@ -4,7 +4,6 @@ import 'package:flutter_testapp/core/theme/app_radius.dart';
 import 'package:flutter_testapp/core/theme/app_spacing.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Centralized Material 3 light and dark theme configuration.
 abstract final class AppTheme {
   static const ColorScheme _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
@@ -58,10 +57,8 @@ abstract final class AppTheme {
     outlineVariant: AppColors.darkOutlineVariant,
   );
 
-  /// Light theme with refined neutral slate surfaces and Deep Indigo accent.
   static ThemeData get lightTheme => _buildTheme(_lightColorScheme);
 
-  /// Dark theme with deep slate surfaces and luminous Indigo accent.
   static ThemeData get darkTheme => _buildTheme(_darkColorScheme);
 
   static ThemeData _buildTheme(ColorScheme colorScheme) {

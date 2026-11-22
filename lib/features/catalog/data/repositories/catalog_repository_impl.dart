@@ -6,7 +6,6 @@ import 'package:flutter_testapp/features/catalog/data/models/product_model.dart'
 import 'package:flutter_testapp/features/catalog/domain/entities/product.dart';
 import 'package:flutter_testapp/features/catalog/domain/repositories/catalog_repository.dart';
 
-/// Concrete [CatalogRepository] mapping transport and schema errors to domain [Failure]s.
 class CatalogRepositoryImpl implements CatalogRepository {
   const CatalogRepositoryImpl({
     required CatalogRemoteDataSource remoteDataSource,

@@ -297,7 +297,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 350));
         await tester.pumpAndSettle();
 
-        expect(find.text('1 items available'), findsOneWidget);
+        expect(find.text('1 item available'), findsOneWidget);
         expect(find.text('Cedar Noir Eau de Parfum'), findsOneWidget);
         expect(find.text('Velvet Lash Mascara'), findsNothing);
         expect(tester.takeException(), isNull);

@@ -8,7 +8,6 @@ import 'package:flutter_testapp/features/catalog/domain/entities/product.dart';
 import 'package:flutter_testapp/features/catalog/presentation/widgets/safe_network_image.dart';
 import 'package:flutter_testapp/features/catalog/presentation/widgets/studio_image_backdrop.dart';
 
-/// Product details screen with expandable SliverAppBar Hero transition.
 class ProductDetailsPage extends StatelessWidget {
   const ProductDetailsPage({
     required this.product,
@@ -63,11 +62,17 @@ class ProductDetailsPage extends StatelessWidget {
                 children: <Widget>[
                   StudioImageBackdrop(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.xl,
+                        AppSpacing.xxl,
+                        AppSpacing.xl,
+                        AppSpacing.xl,
+                      ),
                       child: Hero(
                         tag: 'product-image-${product.id}',
                         child: SafeNetworkImage(
-                          imageUrl: product.heroImageUrl,
+                          // Reuse the catalog thumbnail URL so Hero transitions hit memory cache in 0ms.
+                          imageUrl: product.primaryImageUrl,
                           fit: BoxFit.contain,
                           semanticsLabel: product.title,
                         ),

@@ -6,7 +6,6 @@ import 'package:flutter_testapp/features/catalog/domain/entities/product.dart';
 import 'package:flutter_testapp/features/catalog/presentation/widgets/safe_network_image.dart';
 import 'package:flutter_testapp/features/catalog/presentation/widgets/studio_image_backdrop.dart';
 
-/// Modern hairline-bordered catalog card with Hero transition and tactile press.
 class ProductCard extends StatefulWidget {
   const ProductCard({
     required this.product,
@@ -74,12 +73,21 @@ class _ProductCardState extends State<ProductCard> {
                     fit: StackFit.expand,
                     children: <Widget>[
                       StudioImageBackdrop(
-                        child: Hero(
-                          tag: 'product-image-${product.id}',
-                          child: SafeNetworkImage(
-                            imageUrl: product.primaryImageUrl,
-                            fit: BoxFit.cover,
-                            semanticsLabel: product.title,
+                        child: Padding(
+                          // Leave top clearance so the rating pill never overlaps tall/wide product art.
+                          padding: const EdgeInsets.fromLTRB(
+                            AppSpacing.md,
+                            AppSpacing.xxl,
+                            AppSpacing.md,
+                            AppSpacing.sm,
+                          ),
+                          child: Hero(
+                            tag: 'product-image-${product.id}',
+                            child: SafeNetworkImage(
+                              imageUrl: product.primaryImageUrl,
+                              fit: BoxFit.contain,
+                              semanticsLabel: product.title,
+                            ),
                           ),
                         ),
                       ),
@@ -110,15 +118,13 @@ class _ProductCardState extends State<ProductCard> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Flexible(
-                          child: Text(
-                            product.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.titleSmall?.copyWith(
-                              color: colorScheme.onSurface,
-                              height: 1.2,
-                            ),
+                        Text(
+                          product.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleSmall?.copyWith(
+                            color: colorScheme.onSurface,
+                            height: 1.25,
                           ),
                         ),
                         const Spacer(),

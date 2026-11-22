@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_testapp/core/error/failures.dart';
 import 'package:flutter_testapp/features/catalog/domain/entities/product.dart';
 
-/// Lifecycle states for the product catalog screen.
 enum CatalogStatus {
   initial,
   loading,
@@ -10,7 +9,6 @@ enum CatalogStatus {
   failure,
 }
 
-/// Immutable state representing the catalog items, filters, and load status.
 final class CatalogState extends Equatable {
   const CatalogState({
     this.status = CatalogStatus.initial,
@@ -30,7 +28,6 @@ final class CatalogState extends Equatable {
   final String searchQuery;
   final Failure? failure;
 
-  /// Indicates whether a search query or category filter is currently active.
   bool get hasActiveFilters =>
       searchQuery.isNotEmpty || selectedCategory != null;
 

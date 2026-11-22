@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-/// Standardized border radius design tokens (`sm: 8`, `md: 12`, `lg: 16`, `xl: 24`).
 abstract final class AppRadius {
   static const double sm = 8;
   static const double md = 12;

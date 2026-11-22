@@ -8,7 +8,6 @@ import 'package:flutter_testapp/features/catalog/domain/repositories/catalog_rep
 import 'package:flutter_testapp/features/catalog/presentation/bloc/catalog_event.dart';
 import 'package:flutter_testapp/features/catalog/presentation/bloc/catalog_state.dart';
 
-/// Coordinates catalog loading, sanitized search debouncing, and category filtering.
 class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
   CatalogBloc({
     required CatalogRepository repository,
@@ -183,7 +182,7 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
         product.description.toLowerCase().contains(normalizedQuery);
   }
 
-  /// Latest-request-wins event transformer cancelling stale in-flight work.
+  // Latest-request-wins: cancels in-flight work if a newer event arrives.
   static EventTransformer<E> _restartable<E>() {
     return (Stream<E> events, EventMapper<E> mapper) {
       late final StreamController<E> controller;
@@ -213,8 +212,7 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
     };
   }
 
-  /// Debounces search events by [duration], cancels stale mappers, and ties
-  /// the pending timer to [_searchDebounceTimer] so resets cancel pending input.
+  // Keep the debounce timer on the bloc so CatalogFiltersReset cancels pending searches.
   EventTransformer<CatalogSearchQueryChanged> _debounceRestartableSearch(
     Duration duration,
   ) {

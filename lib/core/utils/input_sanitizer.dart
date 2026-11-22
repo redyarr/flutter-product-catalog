@@ -1,11 +1,8 @@
 import 'package:flutter_testapp/core/constants/api_constants.dart';
 
-/// Utilities for normalizing and bounding user-supplied search input.
 abstract final class InputSanitizer {
   static final RegExp _multiWhitespace = RegExp(r'\s+');
 
-  /// Trims surrounding whitespace, collapses inner gaps, and caps length to
-  /// [ApiConstants.maxSearchLength] (100 characters).
   static String sanitizeSearchQuery(String raw) {
     final String normalized = raw.trim().replaceAll(_multiWhitespace, ' ');
     if (normalized.length <= ApiConstants.maxSearchLength) {

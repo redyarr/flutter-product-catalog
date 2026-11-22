@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_testapp/core/utils/url_validator.dart';
 
-/// Displays a network image only after validating `https://` scheme safety,
-/// with loading placeholder and graceful error fallback.
 class SafeNetworkImage extends StatelessWidget {
   const SafeNetworkImage({
     required this.imageUrl,
@@ -27,23 +25,23 @@ class SafeNetworkImage extends StatelessWidget {
       imageUrl,
       fit: fit,
       semanticLabel: semanticsLabel,
-      loadingBuilder: (
+      gaplessPlayback: true,
+      filterQuality: FilterQuality.medium,
+      frameBuilder: (
         BuildContext context,
         Widget child,
-        ImageChunkEvent? loadingProgress,
+        int? frame,
+        bool wasSynchronouslyLoaded,
       ) {
-        if (loadingProgress == null) {
+        // Render cached images immediately without flashing an entrance fade.
+        if (wasSynchronouslyLoaded) {
           return child;
         }
-        return DecoratedBox(
-          decoration: BoxDecoration(color: colorScheme.surfaceContainer),
-          child: Center(
-            child: Icon(
-              Icons.image_outlined,
-              size: 28,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
+        return AnimatedOpacity(
+          opacity: frame == null ? 0 : 1,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          child: child,
         );
       },
       errorBuilder: (

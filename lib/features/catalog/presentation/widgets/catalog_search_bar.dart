@@ -4,7 +4,6 @@ import 'package:flutter_testapp/core/constants/api_constants.dart';
 import 'package:flutter_testapp/core/theme/app_radius.dart';
 import 'package:flutter_testapp/core/theme/app_spacing.dart';
 
-/// Real-time catalog search bar with animated clear action and length cap.
 class CatalogSearchBar extends StatefulWidget {
   const CatalogSearchBar({
     required this.query,
